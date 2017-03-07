@@ -281,6 +281,18 @@ GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName, const 
     return nullptr;
 }
 
+GLViewImpl* GLViewImpl::createWithFullScreenCustom(const std::string& viewName, int width, int height, int refreshRate)
+{
+  auto ret = new (std::nothrow) GLViewImpl();
+  if (ret && ret->initWithFullscreenCustom(viewName, width, height, refreshRate)) {
+    ret->autorelease();
+    return ret;
+  }
+  CC_SAFE_DELETE(ret);
+  return nullptr;
+}
+
+
 bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor, bool resizable)
 {
     setViewName(viewName);
@@ -411,6 +423,17 @@ bool GLViewImpl::initWithFullscreen(const std::string &viewname, const GLFWvidmo
     glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits);
     
     return initWithRect(viewname, Rect(0, 0, (float)videoMode.width, (float)videoMode.height), 1.0f, false);
+}
+
+bool GLViewImpl::initWithFullscreenCustom(const std::string &viewname, int width, int height, int refreshRate)
+{
+  _monitor = glfwGetPrimaryMonitor();
+  if (nullptr == _monitor)
+    return false;
+
+  glfwWindowHint(GLFW_REFRESH_RATE, refreshRate);
+
+  return initWithRect(viewname, Rect(0, 0, width, height), 1.0f, false);
 }
 
 bool GLViewImpl::isOpenGLReady()
