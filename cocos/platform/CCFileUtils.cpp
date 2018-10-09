@@ -1074,6 +1074,7 @@ long FileUtils::getFileSize(const std::string &filepath)
 #include <sys/types.h>
 #include <errno.h>
 #include <dirent.h>
+#include <ftw.h>
 
 bool FileUtils::isDirectoryExistInternal(const std::string& dirPath) const
 {
@@ -1148,15 +1149,28 @@ bool FileUtils::createDirectory(const std::string& path)
     return true;
 }
 
+namespace
+{
+  int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
+  {
+    int rv = remove(fpath);
+
+    if (rv)
+      perror(fpath);
+
+    return rv;
+  }
+}
+
+
 bool FileUtils::removeDirectory(const std::string& path)
 {
-    std::string command = "rm -r ";
-    // Path may include space.
-    command += "\"" + path + "\"";
-    if (system(command.c_str()) >= 0)
-        return true;
-    else
-        return false;
+  if (nftw(path.c_str(), unlink_cb, 64, FTW_DEPTH | FTW_PHYS) == -1) {
+    return false;
+  } else {
+    return true;
+  }
+  return false;
 }
 
 bool FileUtils::removeFile(const std::string &path)
