@@ -129,7 +129,8 @@ public:
      *
      * @param plist Plist file name.
      */
-    void addSpriteFramesWithFile(const std::string& plist);
+  void addSpriteFramesWithFile(const std::string& plist);
+  void addSpriteFramesWithFile(const std::string& plist, std::vector<SpriteFrame*>* resultingSpriteFrames);
 
     /** Adds multiple Sprite Frames from a plist file. The texture will be associated with the created sprite frames.
      @since v0.99.5
@@ -245,11 +246,11 @@ protected:
 
     /*Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
      */
-    void addSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D *texture);
+    void addSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D *texture, std::vector<SpriteFrame*>* resultingSpriteFrames);
     
     /*Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
      */
-    void addSpriteFramesWithDictionary(ValueMap& dictionary, const std::string &texturePath);
+    void addSpriteFramesWithDictionary(ValueMap& dictionary, const std::string &texturePath, std::vector<SpriteFrame*>* resultingSpriteFrames);
     
     /** Removes multiple Sprite Frames from Dictionary.
     * @since v0.99.5
