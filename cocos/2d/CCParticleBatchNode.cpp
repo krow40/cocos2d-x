@@ -106,6 +106,9 @@ bool ParticleBatchNode::initWithTexture(Texture2D *tex, int capacity)
 bool ParticleBatchNode::initWithFile(const std::string& fileImage, int capacity)
 {
     Texture2D *tex = Director::getInstance()->getTextureCache()->addImage(fileImage);
+    if (tex != nullptr) {
+        tex->retain();
+    }
     return initWithTexture(tex, capacity);
 }
 
