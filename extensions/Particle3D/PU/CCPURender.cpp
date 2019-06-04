@@ -593,6 +593,7 @@ bool PUParticle3DEntityRender::initRender( const std::string &texFile )
         if (tex)
         {
             _texture = tex;
+            tex->retain();
             auto* program = backend::Program::getBuiltinProgram(backend::ProgramType::PARTICLE_TEXTURE_3D);
             _programState = new backend::ProgramState(program);
         }
