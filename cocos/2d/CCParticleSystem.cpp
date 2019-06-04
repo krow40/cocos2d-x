@@ -486,6 +486,7 @@ bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string&
                 
                 if (tex)
                 {
+                    tex->retain();
                     setTexture(tex);
                 }
                 else if( dictionary.find("textureImageData") != dictionary.end() )
@@ -510,8 +511,12 @@ bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string&
                         bool isOK = image->initWithImageData(deflated, deflatedLen);
                         CCASSERT(isOK, "CCParticleSystem: error init image with Data");
                         CC_BREAK_IF(!isOK);
-                        
-                        setTexture(Director::getInstance()->getTextureCache()->addImage(image, _plistFile + textureName));
+
+                        auto tex = Director::getInstance()->getTextureCache()->addImage(image, _plistFile + textureName);
+                        if (tex != nullptr) {
+                            tex->retain();
+                        }
+                        setTexture(tex);
 
                         image->release();
                     }

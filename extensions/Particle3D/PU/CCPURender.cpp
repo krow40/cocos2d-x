@@ -573,6 +573,7 @@ bool PUParticle3DEntityRender::initRender( const std::string &texFile )
         if (tex)
         {
             _texture = tex;
+            tex->retain();
             glProgram = GLProgramCache::getInstance()->getGLProgram(GLProgram::SHADER_3D_PARTICLE_TEXTURE);
         }
         else
