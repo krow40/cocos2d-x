@@ -257,6 +257,20 @@ bool Sprite::initWithPolygon(const cocos2d::PolygonInfo &info)
     return ret;
 }
 
+bool Sprite::initWithPolygonAndVertLimit(const cocos2d::PolygonInfo &info, int vertLimit)
+{
+  bool ret = false;
+  Texture2D *texture = _director->getTextureCache()->addImage(info.getFilename());
+  if (texture && initWithTexture(texture))
+  {
+    _polyInfo.replaceWithVertLimit(info, vertLimit);
+    _renderMode = RenderMode::POLYGON;
+    Node::setContentSize(_polyInfo.getRect().size / _director->getContentScaleFactor());
+    ret = true;
+  }
+  return ret;
+}
+
 // designated initializer
 bool Sprite::initWithTexture(Texture2D *texture, const Rect& rect, bool rotated)
 {
@@ -1623,6 +1637,11 @@ void Sprite::setPolygonInfo(const PolygonInfo& info)
 {
     _polyInfo = info;
     _renderMode = RenderMode::POLYGON;
+}
+
+void Sprite::setPolygonInfoNoMalloc(const PolygonInfo& info)
+{
+    _polyInfo.updateNoMalloc(info);
 }
 
 NS_CC_END
