@@ -468,6 +468,14 @@ public:
      * @param PolygonInfo the polygon information object
      */
     void setPolygonInfo(const PolygonInfo& info);
+    
+    /**
+     * Set the sprite to use the triangles from this new PolygonInfo without
+     * allocating memory.
+     * This new PolygonInfo must not have vert or index counts that will cause
+     * the previous PolygonInfo's vert or index buffers to be exceeded.
+     */
+    void setPolygonInfoNoMalloc(const PolygonInfo& info);
 
     /** whether or not contentSize stretches the sprite's texture */
     void setStretchEnabled(bool enabled);
@@ -576,6 +584,14 @@ CC_CONSTRUCTOR_ACCESS :
      * @return  True if the sprite is initialized properly, false otherwise.
      */
     virtual bool initWithPolygon(const PolygonInfo& info);
+
+    /**
+     * Initializes a sprite with a PolygonInfo, allocating enough memory to
+     * hold up to the given vertLimit number of vertices and indices.
+     *
+     * After initialization, the rect used will be the size of the texture, and the offset will be (0,0).
+     */
+    virtual bool initWithPolygonAndVertLimit(const PolygonInfo& info, int vertLimit);
 
     /**
      * Initializes a sprite with a texture and a rect.
