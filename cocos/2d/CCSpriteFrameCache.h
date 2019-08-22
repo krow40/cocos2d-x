@@ -169,6 +169,8 @@ public:
      */
     void addSpriteFramesWithFile(const std::string& plist);
 
+    void addSpriteFramesWithFile(const std::string& plist, std::vector<SpriteFrame*>* resultingSpriteFrames);
+
     /** Adds multiple Sprite Frames from a plist file. The texture will be associated with the created sprite frames.
      @since v0.99.5
      * @js addSpriteFrames
@@ -285,11 +287,11 @@ protected:
 
     /*Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
      */
-    void addSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D *texture, const std::string &plist);
+    void addSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D *texture, const std::string &plist, std::vector<SpriteFrame*>* resultingSpriteFrames);
     
     /*Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
      */
-    void addSpriteFramesWithDictionary(ValueMap& dictionary, const std::string &texturePath, const std::string &plist);
+    void addSpriteFramesWithDictionary(ValueMap& dictionary, const std::string &texturePath, const std::string &plist, std::vector<SpriteFrame*>* resultingSpriteFrames);
     
     /** Removes multiple Sprite Frames from Dictionary.
     * @since v0.99.5

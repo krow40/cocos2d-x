@@ -114,7 +114,7 @@ void SpriteFrameCache::initializePolygonInfo(const Size &textureSize,
     info.setRect(Rect(0, 0, spriteSize.width, spriteSize.height));
 }
 
-void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D* texture, const std::string &plist)
+void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D* texture, const std::string &plist, std::vector<SpriteFrame*>* resultingSpriteFrames)
 {
     /*
     Supported Zwoptex Formats:
@@ -270,6 +270,9 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
         }
         // add sprite frame
         _spriteFramesCache.insertFrame(plist, spriteFrameName, spriteFrame);
+        if (resultingSpriteFrames != nullptr) {
+            resultingSpriteFrames->push_back(spriteFrame);
+        }
     }
     _spriteFramesCache.markPlistFull(plist, true);
     CC_SAFE_DELETE(image);
@@ -319,7 +322,7 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dict, const std::
     
     if (texture)
     {
-        addSpriteFramesWithDictionary(dict, texture, plist);
+        addSpriteFramesWithDictionary(dict, texture, plist, resultingSpriteFrames);
     }
     else
     {
@@ -332,7 +335,7 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, Texture
     std::string fullPath = FileUtils::getInstance()->fullPathForFilename(plist);
     ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(fullPath);
 
-    addSpriteFramesWithDictionary(dict, texture, plist);
+    addSpriteFramesWithDictionary(dict, texture, plist, nullptr);
 }
 
 void SpriteFrameCache::addSpriteFramesWithFileContent(const std::string& plist_content, Texture2D *texture)
@@ -350,6 +353,12 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, const s
 }
 
 void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist)
+{
+  std::vector<SpriteFrame*>* resultingSpriteFrames = nullptr;
+  addSpriteFramesWithFile(plist, resultingSpriteFrames);
+}
+
+void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, std::vector<SpriteFrame*>* resultingSpriteFrames)
 {
     CCASSERT(!plist.empty(), "plist filename should not be nullptr");
     
@@ -394,7 +403,7 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist)
 
         CCLOG("cocos2d: SpriteFrameCache: Trying to use file %s as texture", texturePath.c_str());
     }
-    addSpriteFramesWithDictionary(dict, texturePath, plist);
+    addSpriteFramesWithDictionary(dict, texturePath, plist, resultingSpriteFrames);
 }
 
 bool SpriteFrameCache::isSpriteFramesWithFileLoaded(const std::string& plist) const
