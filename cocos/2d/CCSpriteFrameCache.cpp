@@ -278,7 +278,7 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
     CC_SAFE_DELETE(image);
 }
 
-void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dict, const std::string &texturePath, const std::string &plist)
+void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dict, const std::string &texturePath, const std::string &plist, std::vector<SpriteFrame*>* resultingSpriteFrames)
 {
     std::string pixelFormatName;
     if (dict.find("metadata") != dict.end())
@@ -341,7 +341,7 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, Texture
 void SpriteFrameCache::addSpriteFramesWithFileContent(const std::string& plist_content, Texture2D *texture)
 {
     ValueMap dict = FileUtils::getInstance()->getValueMapFromData(plist_content.c_str(), static_cast<int>(plist_content.size()));
-    addSpriteFramesWithDictionary(dict, texture, "by#addSpriteFramesWithFileContent()");
+    addSpriteFramesWithDictionary(dict, texture, "by#addSpriteFramesWithFileContent()", nullptr);
 }
 
 void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, const std::string& textureFileName)
@@ -349,7 +349,7 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, const s
     CCASSERT(textureFileName.size()>0, "texture name should not be null");
     const std::string fullPath = FileUtils::getInstance()->fullPathForFilename(plist);
     ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(fullPath);
-    addSpriteFramesWithDictionary(dict, textureFileName, plist);
+    addSpriteFramesWithDictionary(dict, textureFileName, plist, nullptr);
 }
 
 void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist)
