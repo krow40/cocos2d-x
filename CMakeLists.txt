@@ -42,7 +42,7 @@ AssureOutOfSourceBuilds()
 include(CocosBuildSet)
 
 # build options
-option(BUILD_TESTS "Build tests" ON)
+option(BUILD_TESTS "Build tests" OFF)
 
 # default tests include lua, js test project, so we set those option on to build libs
 set(BUILD_LUA_LIBS ON)
