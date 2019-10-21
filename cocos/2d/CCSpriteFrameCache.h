@@ -284,6 +284,8 @@ public:
      */
     SpriteFrame* getSpriteFrameByName(const std::string& name);
 
+    SpriteFrame* getSpriteFrameByNameSilent(const std::string& name);
+
     /** @deprecated use getSpriteFrameByName() instead */
     CC_DEPRECATED_ATTRIBUTE SpriteFrame* spriteFrameByName(const std::string&name) { return getSpriteFrameByName(name); }
 

@@ -374,7 +374,7 @@ HttpClient::HttpClient()
 , _clearRequestPredicate(nullptr)
 , _clearResponsePredicate(nullptr)
 {
-    CCLOG("In the constructor of HttpClient!");
+    //CCLOG("In the constructor of HttpClient!");
     memset(_responseMessage, 0, sizeof(char) * RESPONSE_BUFFER_SIZE);
     _scheduler = Director::getInstance()->getScheduler();
     increaseThreadCount();

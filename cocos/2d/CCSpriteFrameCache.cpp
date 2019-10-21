@@ -556,6 +556,24 @@ SpriteFrame* SpriteFrameCache::getSpriteFrameByName(const std::string& name)
     return frame;
 }
 
+SpriteFrame* SpriteFrameCache::getSpriteFrameByNameSilent(const std::string& name)
+{
+    SpriteFrame* frame = _spriteFramesCache.at(name);
+    if (!frame)
+    {
+        // try alias dictionary
+        if (_spriteFramesAliases.find(name) != _spriteFramesAliases.end())
+        {
+            std::string key = _spriteFramesAliases[name].asString();
+            if (!key.empty())
+            {
+                frame = _spriteFramesCache.at(key);
+            }
+        }
+    }
+    return frame;
+}
+
 void SpriteFrameCache::reloadSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D *texture, const std::string &plist)
 {
     ValueMap& framesDict = dictionary["frames"].asValueMap();
