@@ -95,6 +95,7 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <PrecompiledHeaderFile>precheader.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>precheader.h</ForcedIncludeFiles>
+      <AdditionalUsingDirectories>$(ProjectDir)\..\..\;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
     </ClCompile>
     <PreLinkEvent>
       <Command>if not exist "$(OutDir)" mkdir "$(OutDir)"
