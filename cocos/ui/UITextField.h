@@ -605,6 +605,8 @@ public:
      * @js NA
      */
     void setCursorPosition(std::size_t cursorPosition);
+
+  void insertNewline();
     
     /**
      * Set cursor position to hit letter, if enabled

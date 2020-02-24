@@ -240,6 +240,8 @@ public:
     */
     void setCursorFromPoint(const Vec2 &point, const Camera* camera);
 
+  void insertNewline();
+
 protected:
     //////////////////////////////////////////////////////////////////////////
     // IMEDelegate interface
