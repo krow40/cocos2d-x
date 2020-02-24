@@ -432,6 +432,28 @@ void TextFieldTTF::setTextColorInternally(const Color4B& color)
     Label::setTextColor(color);
 }
 
+void TextFieldTTF::insertNewline() {
+  std::string insert = "\n";
+  if (_cursorEnabled)
+  {
+      StringUtils::StringUTF8 stringUTF8;
+
+      stringUTF8.replace(_inputText);
+      stringUTF8.insert(_cursorPosition, insert);
+
+      setCursorPosition(_cursorPosition + 1);
+
+      setString(stringUTF8.getAsCharSequence());
+  }
+  else
+  {
+      std::string sText(_inputText);
+      sText.append(insert);
+      setString(sText);
+  }
+
+}
+
 void TextFieldTTF::setTextColor(const Color4B &color)
 {
     _colorText = color;

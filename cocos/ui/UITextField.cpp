@@ -863,6 +863,13 @@ void TextField::setCursorPosition(std::size_t cursorPosition)
     _textFieldRenderer->setCursorPosition(cursorPosition);
 }
 
+void TextField::insertNewline() {
+
+  _textFieldRenderer->insertNewline();
+
+}
+
+
 void TextField::setCursorFromPoint(const Vec2 &point, const Camera* camera)
 {
     _textFieldRenderer->setCursorFromPoint(point, camera);
