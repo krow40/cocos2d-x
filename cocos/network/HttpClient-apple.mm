@@ -510,6 +510,10 @@ void HttpClient::processResponse(HttpResponse* response, char* responseMessage)
             requestType = @"DELETE";
             break;
 
+        case HttpRequest::Type::POSTFILE:
+            requestType = @"POST";
+            break;
+
         default:
             CCASSERT(false, "CCHttpClient: unknown request type, only GET,POST,PUT or DELETE is supported");
             break;

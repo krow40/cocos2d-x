@@ -74,6 +74,7 @@ public:
         POST,
         PUT,
         DELETE,
+        POSTFILE,
         UNKNOWN,
     };
 
@@ -339,6 +340,22 @@ public:
         return _headers;
     }
 
+  void setFile(std::string filePartName, std::string filePath)
+  {
+    _pFilePartName = filePartName;
+    _pFilePath = filePath;
+  }
+
+  inline std::string getFilePath()
+  {
+    return _pFilePath;
+  }
+
+  inline std::string getFilePartName()
+  {
+    return _pFilePartName;
+  }
+
 private:
     void doSetResponseCallback(Ref* pTarget, SEL_HttpResponse pSelector)
     {
@@ -366,6 +383,8 @@ protected:
     ccHttpRequestCallback       _pCallback;      /// C++11 style callbacks
     void*                       _pUserData;      /// You can add your customed data here
     std::vector<std::string>    _headers;        /// custom http headers
+    std::string                 _pFilePath;
+    std::string                 _pFilePartName;
 };
 
 }
