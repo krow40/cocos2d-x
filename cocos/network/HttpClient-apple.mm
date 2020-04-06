@@ -169,9 +169,37 @@ static int processTask(HttpClient* client, HttpRequest* request, NSString* reque
         }
     }
 
-    //if request type is post or put,set header and data
-    if([requestType  isEqual: @"POST"] || [requestType isEqual: @"PUT"])
-    {   
+    if (request->getRequestType() == HttpRequest::Type::POSTFILE) {
+    NSString* charset = (NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
+
+        // A file is to be uploaded by HTTP POST.
+
+        NSString* boundary = @"W72KU32Ah0uRJCFP";
+        NSString* contentType = [NSString stringWithFormat: @"multipart/form-data; charset=%@; boundary=%@", charset, boundary];
+        [nsrequest addValue: contentType forHTTPHeaderField: @"Content-Type"];
+
+        NSMutableData* tempPostData = [NSMutableData data];
+        [tempPostData appendData: [[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding: NSUTF8StringEncoding]];
+
+        NSString* filePath = [NSString stringWithUTF8String: request->getFilePath().c_str()];
+        NSString* filePartName = [NSString stringWithUTF8String: request->getFilePartName().c_str()];
+        NSString* fileName = [filePath lastPathComponent];
+        [tempPostData appendData: [[NSString stringWithFormat: @"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", filePartName, fileName] dataUsingEncoding: NSUTF8StringEncoding]];
+
+        [tempPostData appendData: [@"Content-Type: application/octet-stream\r\n\r\n" dataUsingEncoding: NSUTF8StringEncoding]];
+
+        // Read the file that will be sent:
+
+        NSData* data = [NSData dataWithContentsOfFile: filePath];
+        [tempPostData appendData: data];
+        [tempPostData appendData: [[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary] dataUsingEncoding: NSUTF8StringEncoding]];
+        [nsrequest setHTTPBody: tempPostData];
+
+    } else if([requestType  isEqual: @"POST"] || [requestType isEqual: @"PUT"])
+    {
+
+      // Request type is post or put, so set header and data:
+
         char* requestDataBuffer = request->getRequestData();
         if (nullptr !=  requestDataBuffer && 0 != request->getRequestDataSize())
         {
