@@ -539,7 +539,7 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
 - (BOOL)hasText
 {
-    return NO;
+    return YES;
 }
 
 - (void)insertText:(NSString *)text
