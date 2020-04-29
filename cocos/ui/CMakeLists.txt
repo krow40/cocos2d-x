@@ -26,9 +26,7 @@ elseif(APPLE)
             )
     elseif(IOS)
         set(COCOS_UI_SPECIFIC_HEADER
-            ui/UIWebView.h
             ui/UIVideoPlayer.h
-            ui/UIWebViewImpl-ios.h
             ui/UIEditBox/UIEditBoxImpl-ios.h
             ui/UIEditBox/iOS/CCUIEditBoxIOS.h
             ui/UIEditBox/iOS/CCUIMultilineTextField.h
@@ -38,9 +36,7 @@ elseif(APPLE)
             ui/UIEditBox/iOS/CCUISingleLineTextField.h
             )
         set(COCOS_UI_SPECIFIC_SRC
-            ui/UIWebView.mm
             ui/UIVideoPlayer-ios.mm
-            ui/UIWebViewImpl-ios.mm
             ui/UIEditBox/UIEditBoxImpl-ios.mm
             ui/UIEditBox/iOS/CCUIEditBoxIOS.mm
             ui/UIEditBox/iOS/CCUIMultilineTextField.mm
@@ -58,17 +54,12 @@ elseif(LINUX)
         )
 elseif(ANDROID)
     set(COCOS_UI_SPECIFIC_HEADER
-        ui/UIWebView.h
         ui/UIVideoPlayer.h
-        ui/UIWebViewImpl-android.h
         ui/UIEditBox/UIEditBoxImpl-android.h
         )
     set(COCOS_UI_SPECIFIC_SRC
         ui/UIEditBox/UIEditBoxImpl-android.cpp
         ui/UIVideoPlayer-android.cpp
-        ui/UIWebViewImpl-android.cpp
-        # it's special for android, not a common file
-        ui/UIWebView.cpp
         )
 endif()
 
