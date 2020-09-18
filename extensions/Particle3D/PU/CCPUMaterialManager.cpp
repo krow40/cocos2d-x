@@ -104,7 +104,7 @@ void PUMaterialCache::addMaterial( PUMaterial *material )
 {
     for (auto iter : _materialMap){
         if (iter->name == material->name){
-          CCLOG("warning: Material has existed (FilePath: %s,  MaterialName: %s)", material->fileName.c_str(), material->name.c_str());
+          //CCLOG("warning: Material has existed (FilePath: %s,  MaterialName: %s)", material->fileName.c_str(), material->name.c_str());
         return;
       }
     }
