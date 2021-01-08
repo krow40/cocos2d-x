@@ -352,7 +352,12 @@ namespace cocostudio
             case 1:
             {
                 std::string plist = imageFileNameDic->plistFile()->c_str();
-                SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(imageFileName);
+                SpriteFrame* spriteFrame;
+                if (imageFileName.length() > 0) {
+                    spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(imageFileName);
+                } else {
+                    spriteFrame = nullptr;
+                }
                 if (spriteFrame)
                 {
                     fileExist = true;
