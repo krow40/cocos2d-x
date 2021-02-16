@@ -879,11 +879,12 @@ namespace cocostudio
         button->setTitleColor(titleColor);
         
         int titleFontSize = options->fontSize();
-        button->setTitleFontSize(titleFontSize);
+        /*button->setTitleFontSize(titleFontSize);
         
         std::string titleFontName = options->fontName()->c_str();
         button->setTitleFontName(titleFontName);
-        
+        */
+      bool usingResourceData = false;
         auto resourceData = options->fontResource();
         bool fileExist = false;
         std::string errorFilePath = "";
@@ -901,7 +902,8 @@ namespace cocostudio
             }
             if (fileExist)
             {
-                button->setTitleFontName(path);
+                button->setTitleFontNameAndSize(path, titleFontSize);
+              usingResourceData = true;
             }
         }
         
@@ -918,6 +920,10 @@ namespace cocostudio
                 Color4B outlineColor(f_outlineColor->r(), f_outlineColor->g(), f_outlineColor->b(), f_outlineColor->a());
                 auto label = button->getTitleRenderer();
                 label->enableOutline(outlineColor, options->outlineSize());
+
+              if (usingResourceData) {
+                button->setTitleFontNameAndSize(path, titleFontSize);
+              }
             }
         }
         
@@ -932,10 +938,14 @@ namespace cocostudio
                 label->enableShadow(shadowColor, Size(options->shadowOffsetX(), options->shadowOffsetY()), options->shadowBlurRadius());
             }
         }
+
+
+
+
         
         auto widgetReader = WidgetReader::getInstance();
         widgetReader->setPropsWithFlatBuffers(node, (Table*)options->widgetOptions());
-        
+
         if (scale9Enabled)
         {
             button->setUnifySizeEnabled(false);

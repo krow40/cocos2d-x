@@ -816,6 +816,28 @@ void Button::setTitleFontName(const std::string& fontName)
     updateContentSize();
 }
 
+void Button::setTitleFontNameAndSize(const std::string& fontName, float size)
+{
+    createTitleRendererIfNull();
+
+    if(FileUtils::getInstance()->isFileExist(fontName)) {
+        std::string lowerCasedFontName = fontName;
+        std::transform(lowerCasedFontName.begin(), lowerCasedFontName.end(), lowerCasedFontName.begin(), ::tolower);
+        if (lowerCasedFontName.find(".fnt") != std::string::npos) {
+            _titleRenderer->setBMFontFilePath(fontName);
+        } else {
+            TTFConfig config = _titleRenderer->getTTFConfig();
+            config.fontFilePath = fontName;
+            config.fontSize = size;
+            _titleRenderer->setTTFConfig(config);
+        }
+    } else {
+        _titleRenderer->setSystemFontName(fontName);
+    }
+    _fontName = fontName;
+    updateContentSize();
+}
+
 Label* Button::getTitleRenderer()const
 {
     return _titleRenderer;

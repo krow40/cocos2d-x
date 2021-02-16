@@ -243,6 +243,8 @@ public:
      */
     void setTitleFontName(const std::string& fontName);
 
+    void setTitleFontNameAndSize(const std::string& fontName, float size);
+
     /**
      * Query the font name of button's title
      *@return font name in std::string
