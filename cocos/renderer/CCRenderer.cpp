@@ -718,12 +718,6 @@ void Renderer::flushTriangles()
 bool Renderer::checkVisibility(const Mat4 &transform, const Size &size)
 {
     auto director = Director::getInstance();
-    auto scene = director->getRunningScene();
-
-    //If draw to Rendertexture, return true directly.
-    // only cull the default camera. The culling algorithm is valid for default camera.
-    if (!scene || (scene && scene->_defaultCamera != Camera::getVisitingCamera()))
-        return true;
 
     Rect visibleRect(director->getVisibleOrigin(), director->getVisibleSize());
 
@@ -732,11 +726,13 @@ bool Renderer::checkVisibility(const Mat4 &transform, const Size &size)
     float hSizeY = size.height/2;
     Vec3 v3p(hSizeX, hSizeY, 0);
     transform.transformPoint(&v3p);
-    Vec2 v2p = Camera::getVisitingCamera()->projectGL(v3p);
+    auto visitingCamera = Camera::getVisitingCamera();
+    Vec2 v2p = visitingCamera->projectGL(v3p);
 
     // convert content size to world coordinates
-    float wshw = std::max(fabsf(hSizeX * transform.m[0] + hSizeY * transform.m[4]), fabsf(hSizeX * transform.m[0] - hSizeY * transform.m[4]));
-    float wshh = std::max(fabsf(hSizeX * transform.m[1] + hSizeY * transform.m[5]), fabsf(hSizeX * transform.m[1] - hSizeY * transform.m[5]));
+
+    float wshw = std::max(fabsf(hSizeX * transform.m[0] + hSizeY * transform.m[4]), fabsf(hSizeX * transform.m[0] - hSizeY * transform.m[4])) * 2.5f / visitingCamera->getScaleX();
+    float wshh = std::max(fabsf(hSizeX * transform.m[1] + hSizeY * transform.m[5]), fabsf(hSizeX * transform.m[1] - hSizeY * transform.m[5]) * 2.5f / visitingCamera->getScaleY());
 
     // enlarge visible rect half size in screen coord
     visibleRect.origin.x -= wshw;
