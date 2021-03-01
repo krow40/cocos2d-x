@@ -130,8 +130,7 @@ DepthStencilStateMTL::DepthStencilStateMTL(id<MTLDevice> mtlDevice, const DepthS
 
 DepthStencilStateMTL::~DepthStencilStateMTL()
 {
-    //[_mtlDepthStencilState release];
-  _mtlDepthStencilState = nil;
+    [_mtlDepthStencilState release];
 }
 
 CC_BACKEND_END
