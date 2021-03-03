@@ -387,11 +387,15 @@ void CommandBufferMTL::afterDraw()
 
 void CommandBufferMTL::setDepthStencilState(DepthStencilState* depthStencilState)
 {
-    if (depthStencilState)
+    if (depthStencilState) {
         _mtlDepthStencilState = static_cast<DepthStencilStateMTL*>(depthStencilState)->getMTLDepthStencilState();
-    else
+        [_mtlDepthStencilState retain];
+    } else {
+        if (_mtlDepthStencilState) {
+            [_mtlDepthStencilState release];
+        }
         _mtlDepthStencilState = nil;
-    
+    }
 }
 
 void CommandBufferMTL::prepareDrawing() const
