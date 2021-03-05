@@ -28,10 +28,12 @@
 #include <stack>
 #include <array>
 #include <deque>
+#include <unordered_map>
 
 #include "platform/CCPlatformMacros.h"
 #include "renderer/CCRenderCommand.h"
 #include "renderer/backend/Types.h"
+#include "renderer/backend/DepthStencilState.h"
 
 /**
  * @addtogroup renderer
@@ -559,6 +561,9 @@ protected:
     };
 
     std::deque<StateBlock> _stateBlockStack;
+
+    std::unordered_map<cocos2d::backend::DepthStencilDescriptor, cocos2d::backend::DepthStencilState*> depthStencilStates;
+
 };
 
 NS_CC_END

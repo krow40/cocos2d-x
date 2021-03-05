@@ -24,6 +24,8 @@
  
 #include "DepthStencilState.h"
 
+#include "xxhash.h"
+
 CC_BACKEND_BEGIN
 
 bool StencilDescriptor::operator==(const StencilDescriptor &rhs) const
@@ -45,5 +47,56 @@ DepthStencilState::DepthStencilState(const DepthStencilDescriptor& descriptor)
 
 DepthStencilState::~DepthStencilState()
 {}
+
+bool DepthStencilDescriptor::operator==(const DepthStencilDescriptor &other) const {
+
+  return (depthCompareFunction == other.depthCompareFunction
+          && depthWriteEnabled == other.depthWriteEnabled
+          && depthTestEnabled == other.depthTestEnabled
+          && stencilTestEnabled == other.stencilTestEnabled
+          && backFaceStencil == other.backFaceStencil
+          && frontFaceStencil == other.frontFaceStencil);
+}
+
+std::size_t DepthStencilDescriptor::findHash() const {
+
+  struct {
+    CompareFunction depthCompareFunction;
+    bool depthWriteEnabled;
+    bool depthTestEnabled;
+    bool stencilTestEnabled;
+    StencilOperation stencilFailureOperation;
+    StencilOperation depthFailureOperation;
+    StencilOperation depthStencilPassOperation;
+    CompareFunction stencilCompareFunction;
+    unsigned int readMask;
+    unsigned int writeMask;
+    StencilOperation stencilFailureOperation2;
+    StencilOperation depthFailureOperation2;
+    StencilOperation depthStencilPassOperation2;
+    CompareFunction stencilCompareFunction2;
+    unsigned int readMask2;
+    unsigned int writeMask2;
+  } hashMe;
+  memset(&hashMe, 0, sizeof(hashMe));
+  hashMe.depthCompareFunction = depthCompareFunction;
+  hashMe.depthWriteEnabled = depthWriteEnabled;
+  hashMe.depthTestEnabled = depthTestEnabled;
+  hashMe.stencilTestEnabled = stencilTestEnabled;
+  hashMe.stencilFailureOperation = backFaceStencil.stencilFailureOperation;
+  hashMe.depthFailureOperation = backFaceStencil.depthFailureOperation;
+  hashMe.depthStencilPassOperation = backFaceStencil.depthStencilPassOperation;
+  hashMe.stencilCompareFunction = backFaceStencil.stencilCompareFunction;
+  hashMe.readMask = backFaceStencil.readMask;
+  hashMe.writeMask = backFaceStencil.writeMask;
+  hashMe.stencilFailureOperation2 = frontFaceStencil.stencilFailureOperation;
+  hashMe.depthFailureOperation2 = frontFaceStencil.depthFailureOperation;
+  hashMe.depthStencilPassOperation2 = frontFaceStencil.depthStencilPassOperation;
+  hashMe.stencilCompareFunction2 = frontFaceStencil.stencilCompareFunction;
+  hashMe.readMask2 = frontFaceStencil.readMask;
+  hashMe.writeMask2 = frontFaceStencil.writeMask;
+  unsigned int hash = XXH32((const void*)&hashMe, sizeof(hashMe), 0);
+  return hash;
+}
 
 CC_BACKEND_END

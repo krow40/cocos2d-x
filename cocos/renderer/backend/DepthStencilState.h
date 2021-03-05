@@ -63,6 +63,9 @@ struct DepthStencilDescriptor
     bool stencilTestEnabled = false;
     StencilDescriptor backFaceStencil;
     StencilDescriptor frontFaceStencil;
+
+    bool operator==(const DepthStencilDescriptor &other) const;
+    std::size_t findHash() const;
 };
 
 /**
@@ -84,3 +87,14 @@ protected:
 // end of _backend group
 /// @}
 CC_BACKEND_END
+
+namespace std {
+
+  template <>
+  struct hash<cocos2d::backend::DepthStencilDescriptor> {
+    std::size_t operator()(const cocos2d::backend::DepthStencilDescriptor& d) const {
+      return d.findHash();
+    }
+  };
+
+}

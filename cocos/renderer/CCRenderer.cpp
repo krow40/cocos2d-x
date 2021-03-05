@@ -751,7 +751,20 @@ void Renderer::setRenderPipeline(const PipelineDescriptor& pipelineDescriptor, c
     auto needDepthStencilAttachment = renderPassDescriptor.depthTestEnabled || renderPassDescriptor.stencilTestEnabled;
     if (needDepthStencilAttachment)
     {
+      auto iter = depthStencilStates.find(_depthStencilDescriptor);
+      if (iter == depthStencilStates.end()) {
+
+        // Create a new depth stencil state using the descriptor:
+
         depthStencilState = device->createDepthStencilState(_depthStencilDescriptor);
+        depthStencilStates[_depthStencilDescriptor] = depthStencilState;
+        depthStencilState->retain();
+      } else {
+
+        // Use the existing depth stencil state that matches the descriptor:
+
+        depthStencilState = iter->second;
+      }
     }
     _commandBuffer->setDepthStencilState(depthStencilState);
 #ifdef CC_USE_METAL
