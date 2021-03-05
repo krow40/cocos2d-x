@@ -804,7 +804,12 @@ namespace cocostudio
             case 1:
             {
                 std::string plist = progressBarDic->plistFile()->c_str();
-                SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(progressBarFileName);
+                SpriteFrame* spriteFrame;
+                if (plist.empty()) {
+                    spriteFrame = nullptr;
+                } else {
+                    spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(progressBarFileName);
+                }
                 if (spriteFrame)
                 {
                     progressFileExist = true;

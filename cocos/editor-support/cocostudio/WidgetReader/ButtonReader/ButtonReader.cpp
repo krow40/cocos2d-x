@@ -697,7 +697,7 @@ namespace cocostudio
                 {
                     normalFileExist = true;
                 }
-                else if (SpriteFrameCache::getInstance()->getSpriteFrameByName(normalTexturePath))
+                else if (normalTexturePath.length() > 0 && SpriteFrameCache::getInstance()->getSpriteFrameByName(normalTexturePath))
                 {
                     normalFileExist = true;
                     normalType = 1;
@@ -945,6 +945,10 @@ namespace cocostudio
         
         auto widgetReader = WidgetReader::getInstance();
         widgetReader->setPropsWithFlatBuffers(node, (Table*)options->widgetOptions());
+
+        if (normalType == 0 && normalTexturePath.empty()) {
+            CCLOG("cocos2d: ButtonReader: Button '%s' has no 'normal' image", node->getName().c_str());
+        }
 
         if (scale9Enabled)
         {
