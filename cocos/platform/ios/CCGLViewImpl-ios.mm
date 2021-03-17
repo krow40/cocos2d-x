@@ -33,7 +33,7 @@
 
 NS_CC_BEGIN
 
-void* GLViewImpl::_pixelFormat = kEAGLColorFormatRGB565;
+void* GLViewImpl::_pixelFormat = @"EAGLColorFormat565"; //kEAGLColorFormatRGB565;
 int GLViewImpl::_depthFormat = GL_DEPTH_COMPONENT16;
 int GLViewImpl::_multisamplingCount = 0;
 
@@ -85,10 +85,10 @@ void GLViewImpl::convertAttrs()
 {
     if(_glContextAttrs.redBits==8 && _glContextAttrs.greenBits==8 && _glContextAttrs.blueBits==8 && _glContextAttrs.alphaBits==8)
     {
-        _pixelFormat = kEAGLColorFormatRGBA8;
+      _pixelFormat = @"EAGLColorFormat8888"; //kEAGLColorFormatRGBA8;
     } else if (_glContextAttrs.redBits==5 && _glContextAttrs.greenBits==6 && _glContextAttrs.blueBits==5 && _glContextAttrs.alphaBits==0)
     {
-        _pixelFormat = kEAGLColorFormatRGB565;
+      _pixelFormat = @"EAGLColorFormat565"; //kEAGLColorFormatRGB565;
     } else
     {
         CCASSERT(0, "Unsupported render buffer pixel format. Using default");

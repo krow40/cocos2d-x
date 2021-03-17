@@ -118,7 +118,9 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
 - (id) initWithFrame:(CGRect)frame
 {
-    return [self initWithFrame:frame pixelFormat:kEAGLColorFormatRGB565 depthFormat:0 preserveBackbuffer:NO sharegroup:nil multiSampling:NO numberOfSamples:0];
+    return [self initWithFrame:frame pixelFormat:@"EAGLColorFormat565" depthFormat:0 preserveBackbuffer:NO sharegroup:nil multiSampling:NO numberOfSamples:0];
+  ;
+  //kEAGLColorFormatRGB565;
 }
 
 - (id) initWithFrame:(CGRect)frame pixelFormat:(NSString*)format 
