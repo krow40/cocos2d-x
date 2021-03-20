@@ -252,7 +252,7 @@ THE SOFTWARE.
 
 /** Use physics integration API. */
 #ifndef CC_USE_PHYSICS
-#define CC_USE_PHYSICS 1
+#define CC_USE_PHYSICS 0
 #endif
 
 #if (CC_USE_PHYSICS)
@@ -277,7 +277,7 @@ THE SOFTWARE.
 #if (CC_USE_3D_PHYSICS)
 /** Use bullet physics engine. */
 #ifndef CC_ENABLE_BULLET_INTEGRATION
-#define CC_ENABLE_BULLET_INTEGRATION 1
+#define CC_ENABLE_BULLET_INTEGRATION 0
 #endif
 #endif
 
@@ -306,12 +306,12 @@ THE SOFTWARE.
 /** Support webp or not. If your application don't use webp format picture, you can undefine this macro to save package size.
  */
 #ifndef CC_USE_WEBP
-#define CC_USE_WEBP  1
+#define CC_USE_WEBP  0
 #endif // CC_USE_WEBP
 
 /** Enable Script binding. */
 #ifndef CC_ENABLE_SCRIPT_BINDING
-#define CC_ENABLE_SCRIPT_BINDING 1
+#define CC_ENABLE_SCRIPT_BINDING 0
 #endif
 
 /** When CC_ENABLE_SCRIPT_BINDING and CC_ENABLE_GC_FOR_NATIVE_OBJECTS are both 1

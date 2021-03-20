@@ -48,8 +48,8 @@ THE SOFTWARE.
 #include "ui/UIVBox.h"
 #include "ui/UIRelativeBox.h"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-#include "ui/UIVideoPlayer.h"
-#include "ui/UIWebView/UIWebView.h"
+//#include "ui/UIVideoPlayer.h"
+//#include "ui/UIWebView/UIWebView.h"
 #endif
 #include "ui/GUIExport.h"
 #include "ui/UIScale9Sprite.h"
