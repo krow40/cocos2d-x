@@ -71,6 +71,9 @@ public:
      * @param other     another PolygonInfo to be copied
      */
     PolygonInfo& operator= (const PolygonInfo &other);
+
+    void replaceWithVertLimit(const PolygonInfo &other, int vertLimit);
+
     ~PolygonInfo();
     
     /**
@@ -123,6 +126,13 @@ public:
 
     // FIXME: this should be a property, not a public ivar
     TrianglesCommand::Triangles triangles;
+
+  /**
+   * Update the content of the triangles property, without allocating memory.
+   * The given PolygonInfo must have vert and index counts that will not
+   * exceed this PolygonInfo's allocated buffer sizes.
+   */
+  void updateNoMalloc(const PolygonInfo& other);
 
 protected:
     bool _isVertsOwner;

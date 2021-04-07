@@ -97,6 +97,23 @@ PolygonInfo& PolygonInfo::operator= (const PolygonInfo& other)
     return *this;
 }
 
+void PolygonInfo::replaceWithVertLimit(const PolygonInfo &other, int vertLimit) {
+  if (this != &other)
+  {
+    releaseVertsAndIndices();
+    _filename = other._filename;
+    _isVertsOwner = true;
+    _rect = other._rect;
+    triangles.verts = new (std::nothrow) V3F_C4B_T2F[vertLimit];
+    triangles.indices = new (std::nothrow) unsigned short[vertLimit];
+    CCASSERT(triangles.verts && triangles.indices, "not enough memory");
+    triangles.vertCount = other.triangles.vertCount;
+    triangles.indexCount = other.triangles.indexCount;
+    memcpy(triangles.verts, other.triangles.verts, other.triangles.vertCount * sizeof(other.triangles.verts[0]));
+    memcpy(triangles.indices, other.triangles.indices, other.triangles.indexCount * sizeof(other.triangles.indices[0]));
+  }
+}
+
 PolygonInfo::~PolygonInfo()
 {
     releaseVertsAndIndices();
@@ -174,6 +191,14 @@ float PolygonInfo::getArea() const
         area += (A.x*(B.y-C.y) + B.x*(C.y-A.y) + C.x*(A.y - B.y))/2;
     }
     return area;
+}
+
+void PolygonInfo::updateNoMalloc(const PolygonInfo& other) {
+    auto& otherTriangles = other.triangles;
+    memcpy(triangles.verts, otherTriangles.verts, otherTriangles.vertCount * sizeof(otherTriangles.verts[0]));
+    memcpy(triangles.indices, otherTriangles.indices, otherTriangles.indexCount * sizeof(otherTriangles.indices[0]));
+    triangles.vertCount = otherTriangles.vertCount;
+    triangles.indexCount = otherTriangles.indexCount;
 }
 
 AutoPolygon::AutoPolygon(const std::string &filename)
