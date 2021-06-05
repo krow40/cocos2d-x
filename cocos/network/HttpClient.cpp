@@ -348,11 +348,21 @@ static int processPostFileTask(HttpClient* client, HttpRequest *request, write_c
 
   post1 = NULL;
   postend = NULL;
+
+  for (auto& iter : request->getFieldsSentWithFile()) {
+    curl_formadd(&post1,
+                 &postend,
+                 CURLFORM_COPYNAME, iter.first.c_str(),
+                 CURLFORM_COPYCONTENTS, iter.second.c_str(),
+                 CURLFORM_END);
+  }
+
   curl_formadd(&post1, &postend,
                CURLFORM_COPYNAME, request->getFilePartName().c_str(),
                CURLFORM_FILE, request->getFilePath().c_str(),
                CURLFORM_CONTENTTYPE, "application/octet-stream",
                CURLFORM_END);
+
   CURLRaii curl;
   bool ok = curl.init(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
   && curl.setOption(CURLOPT_NOPROGRESS, 1L)

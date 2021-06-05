@@ -29,6 +29,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "base/CCRef.h"
 #include "base/ccMacros.h"
 
@@ -327,6 +328,14 @@ public:
     _pFilePath = filePath;
   }
 
+  void setFieldsSentWithFile(const std::unordered_map<std::string, std::string>& fields) {
+    fieldsSentWithFile = fields;
+  }
+
+  const std::unordered_map<std::string, std::string>& getFieldsSentWithFile() {
+    return fieldsSentWithFile;
+  }
+
   inline std::string getFilePath()
   {
     return _pFilePath;
@@ -366,6 +375,7 @@ protected:
     std::vector<std::string>    _headers;        /// custom http headers
     std::string                 _pFilePath;
     std::string                 _pFilePartName;
+    std::unordered_map<std::string, std::string> fieldsSentWithFile;
 };
 
 }
