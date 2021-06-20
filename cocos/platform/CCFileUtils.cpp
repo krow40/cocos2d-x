@@ -1606,4 +1606,49 @@ void FileUtils::valueVectorCompact(ValueVector& /*valueVector*/) const
 {
 }
 
+int FileUtils::getMaxCompressedLen(int inputLen) {
+  int n16kBlocks = (inputLen + 16383) / 16384;
+  return inputLen + 6 + (n16kBlocks * 5);
+}
+
+int FileUtils::deflateBuffer(const char* input, int inputLen, char* output, int outputLen) {
+  z_stream zInfo = {0};
+  zInfo.total_in = inputLen;
+  zInfo.avail_in = inputLen;
+  zInfo.total_out = outputLen;
+  zInfo.avail_out = outputLen;
+  zInfo.next_in = (unsigned char*)input;
+  zInfo.next_out = (unsigned char*)output;
+  int ret = -1;
+  int error = deflateInit(&zInfo, Z_DEFAULT_COMPRESSION);
+  if (error == Z_OK) {
+    error = deflate(&zInfo, Z_FINISH);
+    if (error == Z_STREAM_END) {
+      ret = zInfo.total_out;
+    }
+  }
+  deflateEnd(&zInfo);
+  return ret;
+}
+
+int FileUtils::inflateBuffer(const char* input, int inputLen, char* output, int outputLen) {
+  z_stream zInfo = {0};
+  zInfo.total_in = inputLen;
+  zInfo.avail_in = inputLen;
+  zInfo.total_out = outputLen;
+  zInfo.avail_out = outputLen;
+  zInfo.next_in = (unsigned char*)input;
+  zInfo.next_out = (unsigned char*)output;
+  int ret = -1;
+  int error = inflateInit(&zInfo);
+  if (error == Z_OK) {
+    error = inflate(&zInfo, Z_FINISH);
+    if (error == Z_STREAM_END) {
+      ret = zInfo.total_out;
+    }
+  }
+  inflateEnd(&zInfo);
+  return ret;
+}
+
 NS_CC_END

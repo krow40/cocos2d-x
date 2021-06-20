@@ -328,6 +328,12 @@ public:
     _pFilePath = filePath;
   }
 
+  void setMemoryFile(std::string filePartName, std::string fileContent)
+  {
+    _pFilePartName = filePartName;
+    _pFileContent = fileContent;
+  }
+
   void setFieldsSentWithFile(const std::unordered_map<std::string, std::string>& fields) {
     fieldsSentWithFile = fields;
   }
@@ -339,6 +345,16 @@ public:
   inline std::string getFilePath()
   {
     return _pFilePath;
+  }
+
+  inline const char* getFileContent()
+  {
+    return _pFileContent.c_str();
+  }
+
+  inline size_t getFileContentLength()
+  {
+    return _pFileContent.length();
   }
 
   inline std::string getFilePartName()
@@ -374,6 +390,7 @@ protected:
     void*                       _pUserData;      /// You can add your customed data here
     std::vector<std::string>    _headers;        /// custom http headers
     std::string                 _pFilePath;
+    std::string                 _pFileContent;
     std::string                 _pFilePartName;
     std::unordered_map<std::string, std::string> fieldsSentWithFile;
 };

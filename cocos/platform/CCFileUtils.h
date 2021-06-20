@@ -839,6 +839,16 @@ public:
      */
     virtual std::string getNewFilename(const std::string &filename) const;
 
+    /*
+     *  Simple methods for compressing/decompressing a memory buffer with ZLib:
+     */
+
+    static int getMaxCompressedLen(int inputLen);
+
+    static int deflateBuffer(const char* input, int inputLen, char* output, int outputLen);
+
+    static int inflateBuffer(const char* input, int inputLen, char* output, int outputLen);
+
 protected:
     /**
      *  The default constructor.

@@ -357,11 +357,22 @@ static int processPostFileTask(HttpClient* client, HttpRequest *request, write_c
                  CURLFORM_END);
   }
 
-  curl_formadd(&post1, &postend,
-               CURLFORM_COPYNAME, request->getFilePartName().c_str(),
-               CURLFORM_FILE, request->getFilePath().c_str(),
-               CURLFORM_CONTENTTYPE, "application/octet-stream",
-               CURLFORM_END);
+  if (request->getFilePath().length() > 0) {
+    curl_formadd(&post1, &postend,
+                 CURLFORM_COPYNAME, request->getFilePartName().c_str(),
+                 CURLFORM_FILE, request->getFilePath().c_str(),
+                 CURLFORM_CONTENTTYPE, "application/octet-stream",
+                 CURLFORM_END);
+
+  } else if (request->getFileContentLength() > 0) {
+    curl_formadd(&post1, &postend,
+                 CURLFORM_COPYNAME, request->getFilePartName().c_str(),
+                 CURLFORM_BUFFER , "m",
+                 CURLFORM_BUFFERPTR , request->getFileContent(),
+                 CURLFORM_BUFFERLENGTH , request->getFileContentLength(),
+                 CURLFORM_CONTENTTYPE, "application/octet-stream",
+                 CURLFORM_END);
+  }
 
   CURLRaii curl;
   bool ok = curl.init(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
@@ -718,5 +729,3 @@ const std::string& HttpClient::getSSLVerification()
 }
 
 NS_CC_END
-
-
