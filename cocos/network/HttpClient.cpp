@@ -215,6 +215,7 @@ class CURLRaii
     CURL *_curl;
     /// Keeps custom header data
     curl_slist *_headers;
+    std::vector<curl_slist*> _reusableHeaders;
 public:
     CURLRaii()
         : _curl(curl_easy_init())
@@ -279,6 +280,35 @@ public:
         
     }
 
+  bool initContinuity(HttpClient* client, HttpRequest* request, write_callback callback, void* stream, write_callback headerCallback, void* headerStream, char* errorBuffer)
+  {
+    if (!_curl) {
+      return false;
+    }
+    if (!configureCURL(client, _curl, errorBuffer)) {
+      return false;
+    }
+
+      // Set custom headers:
+
+      int continuityHeaders = request->getContinuityHeaders();
+      if (continuityHeaders >= 0 && continuityHeaders < _reusableHeaders.size()) {
+        _headers = _reusableHeaders[continuityHeaders];
+      } else {
+        _headers = NULL;
+      }
+      if (!setOption(CURLOPT_HTTPHEADER, _headers)) {
+        return false;
+      }
+
+      return setOption(CURLOPT_URL, request->getUrl())
+              && setOption(CURLOPT_WRITEFUNCTION, callback)
+              && setOption(CURLOPT_WRITEDATA, stream)
+              && setOption(CURLOPT_HEADERFUNCTION, headerCallback)
+              && setOption(CURLOPT_HEADERDATA, headerStream);
+
+  }
+
     /// @param responseCode Null not allowed
     bool perform(long *responseCode)
     {
@@ -293,27 +323,70 @@ public:
         
         return true;
     }
+
+    int storeContinuityHeaders(const std::vector<std::string>& headers) {
+      curl_slist* newHeaders = NULL;
+      curl_slist* temp = NULL;
+      for (auto& header : headers) {
+        temp = curl_slist_append(newHeaders, header.c_str());
+        if (temp == NULL) {
+
+          // Failed to store headers.
+
+          if (newHeaders != NULL) {
+            curl_slist_free_all(newHeaders);
+          }
+          return -1;
+        } else {
+          newHeaders = temp;
+        }
+      }
+      _reusableHeaders.push_back(newHeaders);
+      return _reusableHeaders.size() - 1;
+    }
+
 };
 
 //Process Get Request
 static int processGetTask(HttpClient* client, HttpRequest* request, write_callback callback, void* stream, long* responseCode, write_callback headerCallback, void* headerStream, char* errorBuffer)
 {
+  bool ok;
+  auto instance = request->getContinuityInstance();
+  if (instance == nullptr) {
     CURLRaii curl;
-    bool ok = curl.init(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
+    ok = curl.init(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
             && curl.setOption(CURLOPT_FOLLOWLOCATION, true)
             && curl.perform(responseCode);
-    return ok ? 0 : 1;
+
+  } else {
+    ok = instance->initContinuity(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
+            && instance->setOption(CURLOPT_HTTPPOST, NULL)
+            && instance->setOption(CURLOPT_POST, 0)
+            && instance->setOption(CURLOPT_FOLLOWLOCATION, true)
+            && instance->perform(responseCode);
+  }
+  return ok ? 0 : 1;
 }
 
 //Process POST Request
 static int processPostTask(HttpClient* client, HttpRequest* request, write_callback callback, void* stream, long* responseCode, write_callback headerCallback, void* headerStream, char* errorBuffer)
 {
+  bool ok;
+  auto instance = request->getContinuityInstance();
+  if (instance == nullptr) {
     CURLRaii curl;
-    bool ok = curl.init(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
+    ok = curl.init(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
             && curl.setOption(CURLOPT_POST, 1)
             && curl.setOption(CURLOPT_POSTFIELDS, request->getRequestData())
             && curl.setOption(CURLOPT_POSTFIELDSIZE, request->getRequestDataSize())
             && curl.perform(responseCode);
+  } else {
+    ok = instance->initContinuity(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
+            && instance->setOption(CURLOPT_POST, 1)
+            && instance->setOption(CURLOPT_POSTFIELDS, request->getRequestData())
+            && instance->setOption(CURLOPT_POSTFIELDSIZE, request->getRequestDataSize())
+            && instance->perform(responseCode);
+  }
     return ok ? 0 : 1;
 }
 
@@ -374,13 +447,27 @@ static int processPostFileTask(HttpClient* client, HttpRequest *request, write_c
                  CURLFORM_END);
   }
 
-  CURLRaii curl;
-  bool ok = curl.init(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
-  && curl.setOption(CURLOPT_NOPROGRESS, 1L)
-  && curl.setOption(CURLOPT_MAXREDIRS, 50L)
-  && curl.setOption(CURLOPT_TCP_KEEPALIVE, 1L)
-  && curl.setOption(CURLOPT_HTTPPOST, post1)
-  && curl.perform(responseCode);
+  bool ok;
+  auto instance = request->getContinuityInstance();
+  if (instance == nullptr) {
+    CURLRaii curl;
+    ok = curl.init(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
+    && curl.setOption(CURLOPT_NOPROGRESS, 1L)
+    && curl.setOption(CURLOPT_MAXREDIRS, 50L)
+    && curl.setOption(CURLOPT_TCP_KEEPALIVE, 1L)
+    && curl.setOption(CURLOPT_HTTPPOST, post1)
+    && curl.perform(responseCode);
+  } else {
+    ok = instance->initContinuity(client, request, callback, stream, headerCallback, headerStream, errorBuffer)
+    && instance->setOption(CURLOPT_POST, 0)
+    && instance->setOption(CURLOPT_POSTFIELDS, NULL)
+    && instance->setOption(CURLOPT_POSTFIELDSIZE, 0)
+    && instance->setOption(CURLOPT_NOPROGRESS, 1L)
+    && instance->setOption(CURLOPT_MAXREDIRS, 50L)
+    && instance->setOption(CURLOPT_TCP_KEEPALIVE, 1L)
+    && instance->setOption(CURLOPT_HTTPPOST, post1)
+    && instance->perform(responseCode);
+  }
   return ok ? 0 : 1;
 }
 
@@ -420,6 +507,14 @@ void HttpClient::destroyInstance()
     thiz->decreaseThreadCountAndMayDeleteThis();
 
     CCLOG("HttpClient::destroyInstance() finished!");
+}
+
+CURLRaii* HttpClient::getContinuityInstance() {
+  return new CURLRaii();
+}
+
+int HttpClient::storeContinuityHeaders(CURLRaii* instance, const std::vector<std::string>& headers) {
+  return instance->storeContinuityHeaders(headers);
 }
 
 void HttpClient::enableCookies(const char* cookieFile)

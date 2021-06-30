@@ -45,7 +45,7 @@ NS_CC_BEGIN
 
 namespace network {
 
-
+class CURLRaii;
 
 /** Singleton that handles asynchronous http requests.
  *
@@ -72,6 +72,11 @@ public:
      * Release the instance of HttpClient.
      */
     static void destroyInstance();
+
+  CURLRaii* getContinuityInstance();
+
+  int storeContinuityHeaders(CURLRaii* instance, const std::vector<std::string>& headers);
+
 
     /**
      * Enable cookie support.

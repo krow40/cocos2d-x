@@ -44,6 +44,7 @@ namespace network {
 
 class HttpClient;
 class HttpResponse;
+class CURLRaii;
 
 typedef std::function<void(HttpClient* client, HttpResponse* response)> ccHttpRequestCallback;
 typedef void (cocos2d::Ref::*SEL_HttpResponse)(HttpClient* client, HttpResponse* response);
@@ -339,6 +340,14 @@ public:
     fieldsSentWithFile = fields;
   }
 
+  void setContinuityInstance(CURLRaii* continuityInstance) {
+    _continuityInstance = continuityInstance;
+  }
+
+  void setContinuityHeaders(int continuityHeaders) {
+    _continuityHeaders = continuityHeaders;
+  }
+
   const std::unordered_map<std::string, std::string>& getFieldsSentWithFile() {
     return fieldsSentWithFile;
   }
@@ -361,6 +370,15 @@ public:
   inline std::string getFilePartName()
   {
     return _pFilePartName;
+  }
+
+  inline CURLRaii* getContinuityInstance()
+  {
+    return _continuityInstance;
+  }
+
+  inline int getContinuityHeaders() {
+    return _continuityHeaders;
   }
 
 private:
@@ -395,6 +413,8 @@ protected:
     size_t                      _pFileContentLength;
     std::string                 _pFilePartName;
     std::unordered_map<std::string, std::string> fieldsSentWithFile;
+    CURLRaii* _continuityInstance = nullptr;;
+    int _continuityHeaders = -1;
 };
 
 }
